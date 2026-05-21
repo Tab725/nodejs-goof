@@ -1,0 +1,38 @@
+name: SonarCloud Analysis with Quality Gate #commit
+ 
+on:
+  push:
+    branches:
+      - main
+      - maitreyrbhatt-patch-1
+  pull_request:
+    types: [opened, synchronize, reopened]
+ 
+jobs:
+  sonarcloud:
+    name: SonarCloud Scan
+    runs-on: ubuntu-latest
+ 
+    steps:
+      # Checkout source code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # REQUIRED for branch & PR analysis
+ 
+      # SonarCloud scan (ALL properties inline)
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=devsecops-training-1
+            -Dsonar.projectKey=DevSecOps-Training_Sonaecloud_Training_2
+            -Dsonar.projectName=DevSecOps-Training_Sonaecloud_Training_2
+            -Dsonar.sources=.
+            -Dsonar.exclusions=**/tests/**,**/docs/**,**/vendor/**,**/*.md
+            -Dsonar.sourceEncoding=UTF-8
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.qualitygate.timeout=300
